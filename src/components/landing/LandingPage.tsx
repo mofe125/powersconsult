@@ -1,348 +1,578 @@
 import { useState, useEffect } from 'react';
-import { ThumbsUp, ThumbsDown, Heart, Rocket, ArrowRight, Lightbulb, Menu, X, Zap, BarChart3, Shield, Users } from 'lucide-react';
-import { AuthPage } from '@/components/auth/AuthPage';
-import { UpvoteLogo } from '@/components/brand/UpvoteLogo';
+import {
+  ArrowRight, Menu, X, UserPlus, FileUp, Sparkles, Layers, Briefcase, GraduationCap,
+  ShieldCheck, BadgeCheck, Search, Bell, Check, Star, Linkedin, Mail, Phone,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
+import { PowerConsultLogo } from '@/components/brand/PowerConsultLogo';
+import heroImage from '@/assets/hero-professionals.jpg';
 
+const services = [
+  { icon: UserPlus, title: 'Create Your Profile', body: 'Build your professional profile by adding your education, experience, skills, certifications, and career interests.' },
+  { icon: FileUp, title: 'Upload Your CV', body: 'Securely upload your CV and keep it available for recruiters searching for qualified professionals.' },
+  { icon: Sparkles, title: 'Smart Job Matching', body: 'Receive personalized job recommendations based on your skills, qualifications, and selected career interests.' },
+  { icon: Layers, title: 'Multiple Job Interests', body: 'Select more than one job title or career path to increase your visibility across different opportunities.', tags: ['Human Resources', 'Customer Success', 'Software Engineering', 'Product Management', 'Finance', 'Legal', 'Sales', 'Marketing'] },
+  { icon: Briefcase, title: 'Recruitment Support', body: 'Our HR professionals carefully review candidate profiles and connect qualified applicants with employers looking for top talent.' },
+  { icon: GraduationCap, title: 'Career Development', body: 'Access career resources designed to help you strengthen your CV, prepare for interviews, and grow professionally.' },
+];
 
-
-function MockCard({ title, votes, status, category }: {
-  title: string;
-  votes: number;
-  status: string;
-  category: string;
-}) {
-  const statusColors: Record<string, string> = {
-    'New': 'bg-muted text-muted-foreground',
-    'Planned': 'bg-lavender/15 text-[oklch(0.45_0.12_290)]',
-    'In progress': 'bg-lavender/15 text-[oklch(0.45_0.12_290)]',
-    'Shipped': 'bg-status-shipped/10 text-status-shipped',
-  };
-
-  return (
-    <div className="flex flex-col gap-2 rounded-[12px] border border-border/60 bg-white p-3">
-      <p className="text-[13px] font-semibold text-foreground">{title}</p>
-      <div className="flex flex-wrap items-center gap-1.5">
-        <div className="flex items-center gap-1 rounded-[6px] bg-vote-up/10 px-2 py-0.5 text-[10px] font-semibold text-vote-up">
-          <ThumbsUp className="h-2.5 w-2.5" />
-          <span>{votes}</span>
-        </div>
-        <div className="flex items-center gap-1 rounded-[6px] bg-vote-down/10 px-2 py-0.5 text-[10px] font-semibold text-vote-down">
-          <ThumbsDown className="h-2.5 w-2.5" />
-          <span>0</span>
-        </div>
-        <div className="mx-0.5 h-3 w-px bg-border/60" />
-        <span className={`inline-flex items-center rounded-[6px] px-1.5 py-0.5 text-[9px] font-medium ${statusColors[status] ?? 'bg-muted text-muted-foreground'}`}>
-          {status}
-        </span>
-        <span className="inline-flex items-center rounded-[6px] bg-secondary px-1.5 py-0.5 text-[9px] font-medium text-secondary-foreground">
-          {category}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function AppMockup() {
-  return (
-    <div className="relative w-full">
-      <div className="overflow-hidden rounded-[16px] border border-border/50 bg-background shadow-[0_20px_60px_-12px_rgba(0,0,0,0.12)]">
-        <div className="space-y-2 bg-background p-4">
-          <div className="mb-2">
-            <p className="text-[13px] font-semibold text-foreground">Feature ideas</p>
-            <p className="text-[10px] text-muted-foreground">Upvote the ideas you support</p>
-          </div>
-          <MockCard title="Dark mode for the dashboard" votes={24} status="Planned" category="Design" />
-          <MockCard title="API rate-limit monitoring" votes={18} status="In progress" category="Backend" />
-          <MockCard title="Slack integration for notifications" votes={12} status="New" category="Integrations" />
-          <MockCard title="CSV export for analytics data" votes={9} status="Shipped" category="Analytics" />
-        </div>
-      </div>
-    </div>
-  );
-}
+const aboutBullets = [
+  'Secure Candidate Profiles',
+  'Multiple Career Interests',
+  'Intelligent Job Matching',
+  'Trusted by Employers',
+];
 
 const steps = [
-  {
-    num: '01',
-    icon: Lightbulb,
-    title: 'Submit an idea',
-    description: 'Anyone on the team can propose a feature. Add a title, description, and category.',
-  },
-  {
-    num: '02',
-    icon: ThumbsUp,
-    title: 'Vote and discuss',
-    description: 'Upvote or downvote ideas. Leave comments to refine proposals and add context.',
-  },
-  {
-    num: '03',
-    icon: Rocket,
-    title: 'Watch it ship',
-    description: 'Track status from "New" to "Shipped." The most-wanted features rise to the top.',
-  },
+  { num: '01', title: 'Create Your Account', body: 'Register with your basic personal and professional information.' },
+  { num: '02', title: 'Upload Your CV', body: 'Upload your latest CV and supporting certifications.' },
+  { num: '03', title: 'Choose Career Interests', body: 'Select multiple job titles, industries, and locations that interest you.' },
+  { num: '04', title: 'Get Matched', body: 'Receive suitable job opportunities and be contacted when employers find your profile.' },
 ];
 
-const features = [
-  {
-    icon: Zap,
-    title: 'Instant feedback loops',
-    description: 'Get signal on what your team actually wants — no more guessing or spreadsheet polls.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Priority by consensus',
-    description: 'The most popular ideas surface automatically. Build with confidence, backed by real votes.',
-  },
-  {
-    icon: Shield,
-    title: 'Role-based access',
-    description: 'Admins manage statuses and moderate. Team members submit, vote, and comment freely.',
-  },
-  {
-    icon: Users,
-    title: 'Built for teams',
-    description: 'See who submitted what, track discussions, and keep everyone aligned on the roadmap.',
-  },
+const whyItems = [
+  { icon: Search, title: 'We Help You Get Discovered' },
+  { icon: Layers, title: 'Multiple Job Preferences' },
+  { icon: ShieldCheck, title: 'Secure CV Database' },
+  { icon: BadgeCheck, title: 'Verified Employer Network' },
+  { icon: Sparkles, title: 'Faster Recruitment Process' },
+  { icon: GraduationCap, title: 'Career Growth Opportunities' },
+  { icon: Bell, title: 'Personalized Job Recommendations' },
+  { icon: Star, title: 'Trusted by Top Employers' },
 ];
+
+const careerInterests = [
+  'Human Resources', 'Finance', 'Customer Service', 'Marketing', 'Sales',
+  'Product Management', 'Data Analysis', 'UI/UX', 'Software Engineering',
+  'Business Development', 'Legal', 'Administration', 'Procurement',
+  'Operations', 'Project Management', 'Others',
+];
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--teal)]">
+      {children}
+    </p>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-semibold text-foreground">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+const inputClass =
+  'w-full rounded-[8px] border border-border bg-white px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-[var(--teal)] focus:outline-none focus:ring-2 focus:ring-[var(--teal)]/20 transition-colors';
 
 export function LandingPage() {
-  const [showAuth, setShowAuth] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [showNav, setShowNav] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [interests, setInterests] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const handleScroll = () => {
-      setShowNav(window.scrollY > 80);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollToAuth = () => {
-    setShowAuth(true);
+  const scrollTo = (id: string) => {
     setMobileNavOpen(false);
-    setTimeout(() => {
-      document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const scrollToHowItWorks = () => {
-    setMobileNavOpen(false);
-    document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+  const toggleInterest = (i: string) => {
+    setInterests(prev => {
+      const next = new Set(prev);
+      next.has(i) ? next.delete(i) : next.add(i);
+      return next;
+    });
   };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success("Welcome to Power Consult — we'll be in touch shortly.");
+  };
+
+  const navLinks: [string, string][] = [
+    ['Services', 'services'],
+    ['About', 'about'],
+    ['How it works', 'process'],
+    ['Join', 'register'],
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Nav — appears on scroll */}
-      <nav className={`fixed top-0 left-0 right-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-xl px-6 py-4 sm:px-8 md:px-12 transition-all duration-300 ${showNav ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
-        <div className="mx-auto flex max-w-6xl h-8 items-center justify-between">
-          <UpvoteLogo size="md" variant="light" />
-
-          <div className="hidden items-center gap-8 sm:flex">
-            <button onClick={scrollToHowItWorks} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              How it works
-            </button>
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Nav */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled ? 'border-b border-border bg-background/85 backdrop-blur-xl' : 'bg-transparent'
+        }`}
+      >
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 sm:px-8">
+          <PowerConsultLogo size="md" />
+          <div className="hidden items-center gap-8 md:flex">
+            {navLinks.map(([label, id]) => (
+              <button
+                key={id}
+                onClick={() => scrollTo(id)}
+                className="text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {label}
+              </button>
+            ))}
             <button
-              onClick={scrollToAuth}
-              className="rounded-[10px] bg-foreground px-5 py-1.5 text-sm font-semibold text-background transition-all hover:opacity-90"
+              onClick={() => scrollTo('register')}
+              className="rounded-[8px] bg-[var(--navy)] px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-[var(--navy-deep)]"
             >
-              Get started
+              Join Talent Pool
             </button>
           </div>
-
           <button
             onClick={() => setMobileNavOpen(!mobileNavOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-[8px] text-muted-foreground transition-colors hover:text-foreground sm:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-[8px] text-foreground md:hidden"
+            aria-label="Toggle menu"
           >
             {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
-
         {mobileNavOpen && (
-          <div className="mx-auto max-w-6xl space-y-3 px-1 pt-4 sm:hidden">
-            <button onClick={scrollToHowItWorks} className="block w-full py-2 text-left text-sm text-muted-foreground transition-colors hover:text-foreground">
-              How it works
-            </button>
-            <button
-              onClick={scrollToAuth}
-              className="w-full rounded-[10px] bg-foreground px-4 py-2 text-sm font-semibold text-background"
-            >
-              Get started
-            </button>
+          <div className="border-t border-border bg-background px-6 py-4 md:hidden">
+            <div className="flex flex-col gap-1">
+              {navLinks.map(([label, id]) => (
+                <button
+                  key={id}
+                  onClick={() => scrollTo(id)}
+                  className="rounded-[8px] px-3 py-2.5 text-left text-sm font-semibold text-foreground hover:bg-secondary"
+                >
+                  {label}
+                </button>
+              ))}
+              <button
+                onClick={() => scrollTo('register')}
+                className="mt-2 rounded-[8px] bg-[var(--navy)] px-4 py-2.5 text-sm font-semibold text-white"
+              >
+                Join Talent Pool
+              </button>
+            </div>
           </div>
         )}
       </nav>
 
-      {/* Content */}
-      <div className="relative">
-        {/* Gradient mesh */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[16px]">
-          <div className="absolute -top-[200px] right-[10%] h-[600px] w-[600px] rounded-full bg-lavender/[0.12] blur-[100px]" />
-          <div className="absolute -top-[100px] -left-[200px] h-[500px] w-[500px] rounded-full bg-[oklch(0.65_0.20_350)]/[0.08] blur-[80px]" />
-          <div className="absolute top-[60%] left-[40%] h-[300px] w-[300px] rounded-full bg-lavender/[0.06] blur-[80px]" />
+      {/* ━━━ HERO ━━━ */}
+      <section className="relative overflow-hidden pt-24 sm:pt-28">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-32 -right-32 h-[520px] w-[520px] rounded-full bg-[var(--teal-soft)] opacity-60 blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 h-[420px] w-[420px] rounded-full bg-[var(--navy)]/[0.08] blur-3xl" />
         </div>
-
-        {/* Dot pattern */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `radial-gradient(circle, var(--foreground) 1px, transparent 1px)`,
-            backgroundSize: '24px 24px',
-          }}
-        />
-
-        {/* ━━━ HERO ━━━ */}
-        <section className="relative">
-          <div className="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-24 md:py-32">
-            <div className="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-20">
-              {/* Left copy */}
-              <div className="flex-1 max-w-xl">
-                <div className="mb-8">
-                  <UpvoteLogo size="lg" variant="light" />
-                </div>
-
-                <h1 className="text-3xl font-bold leading-[1.08] tracking-[-0.02em] text-foreground sm:text-4xl md:text-5xl lg:text-[56px]">
-                  Let your team decide what gets built next
-                </h1>
-
-                <p className="mt-6 max-w-md text-base leading-[1.6] text-muted-foreground sm:mt-8 sm:text-lg">
-                  Submit feature ideas, upvote what matters most, and let the best ideas rise to the top — so you always ship the right thing.
-                </p>
-
-                <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
-                  <button
-                    onClick={scrollToAuth}
-                    className="group inline-flex items-center justify-center gap-2 rounded-[10px] bg-lavender px-8 py-3 text-base font-semibold text-foreground transition-all hover:shadow-lg hover:shadow-lavender/25"
-                  >
-                    Get started free <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  </button>
-                  <button
-                    onClick={scrollToHowItWorks}
-                    className="inline-flex items-center justify-center rounded-[10px] border border-border bg-white px-8 py-3 text-base font-semibold text-foreground transition-colors hover:bg-muted"
-                  >
-                    See how it works
-                  </button>
-                </div>
+        <div className="relative mx-auto max-w-6xl px-6 py-16 sm:px-8 sm:py-24">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-white px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--teal)]" />
+                Trusted recruitment partner
               </div>
-
-              {/* Right mockup — clean, no bubbles cluttering */}
-              <div className="w-full max-w-md lg:max-w-lg flex-shrink-0">
-                {/* Decorative floating accents — 3 small, tasteful */}
-                <div className="relative">
-                  <div className="pointer-events-none absolute -top-6 -left-6 z-10 h-12 w-12 rounded-full bg-lavender shadow-lg shadow-lavender/20 animate-[float_6s_ease-in-out_infinite] flex items-center justify-center">
-                    <ThumbsUp className="h-5 w-5 text-foreground" />
-                  </div>
-                  <div className="pointer-events-none absolute -top-4 -right-4 z-10 h-10 w-10 rounded-full bg-[oklch(0.65_0.20_350)] shadow-lg shadow-[oklch(0.65_0.20_350)]/20 animate-[float_5s_ease-in-out_1s_infinite] flex items-center justify-center">
-                    <Heart className="h-4 w-4 text-foreground" />
-                  </div>
-                  <div className="pointer-events-none absolute -bottom-5 -right-5 z-10 h-11 w-11 rounded-full bg-foreground shadow-lg shadow-foreground/20 animate-[float_7s_ease-in-out_2s_infinite] flex items-center justify-center">
-                    <ThumbsUp className="h-4.5 w-4.5 text-background" />
-                  </div>
-                  <AppMockup />
-                </div>
+              <h1 className="text-4xl font-bold leading-[1.05] tracking-[-0.02em] text-foreground sm:text-5xl lg:text-[56px]">
+                Your Next Career <span className="text-[var(--navy)]">Opportunity</span> Starts Here
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-[1.65] text-muted-foreground sm:text-lg">
+                Power Consult connects exceptional talent with innovative startups, technology companies, SMEs, and leading organizations.
+              </p>
+              <p className="mt-4 max-w-xl text-base leading-[1.65] text-muted-foreground">
+                Create your profile, upload your CV, select multiple career interests, and get matched with opportunities that fit your skills and ambitions.
+              </p>
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+                <button
+                  onClick={() => scrollTo('register')}
+                  className="group inline-flex items-center justify-center gap-2 rounded-[8px] bg-[var(--navy)] px-7 py-3.5 text-base font-semibold text-white transition-all hover:bg-[var(--navy-deep)] hover:shadow-lg hover:shadow-[var(--navy)]/20"
+                >
+                  Join Our Talent Pool
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </button>
+                <button
+                  onClick={() => scrollTo('services')}
+                  className="inline-flex items-center justify-center rounded-[8px] border border-border bg-white px-7 py-3.5 text-base font-semibold text-foreground transition-colors hover:border-[var(--teal)] hover:text-[var(--navy)]"
+                >
+                  Explore Opportunities
+                </button>
               </div>
+              <div className="mt-10 flex items-center gap-6 text-xs font-semibold text-muted-foreground">
+                <div><span className="block text-2xl font-bold text-foreground">10k+</span>Candidates</div>
+                <div className="h-8 w-px bg-border" />
+                <div><span className="block text-2xl font-bold text-foreground">500+</span>Employers</div>
+                <div className="h-8 w-px bg-border" />
+                <div><span className="block text-2xl font-bold text-foreground">95%</span>Match rate</div>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-[28px] bg-gradient-to-br from-[var(--teal-soft)] via-white to-[var(--navy)]/5" />
+              <img
+                src={heroImage}
+                alt="Diverse professionals collaborating in a modern office"
+                width={1280}
+                height={1024}
+                className="relative w-full rounded-[20px] border border-border bg-white shadow-xl shadow-[var(--navy)]/10"
+              />
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ━━━ HOW IT WORKS — dark section ━━━ */}
-        <section id="how-it-works" className="relative">
-          <div className="mx-6 rounded-[24px] bg-foreground text-background sm:mx-10">
-          <div className="mx-auto max-w-6xl px-6 py-20 sm:px-10 sm:py-28">
-            <div className="mb-14 max-w-lg">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-lavender">How it works</p>
-              <h2 className="text-3xl font-bold leading-[1.08] tracking-[-0.01em] sm:text-4xl">Three steps from idea to shipped feature</h2>
-            </div>
+      {/* ━━━ SERVICES ━━━ */}
+      <section id="services" className="relative py-20 sm:py-28">
+        <div className="mx-auto max-w-6xl px-6 sm:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <SectionLabel>What we offer</SectionLabel>
+            <h2 className="text-3xl font-bold tracking-[-0.02em] text-foreground sm:text-4xl">
+              Everything You Need to Advance Your Career
+            </h2>
+            <p className="mt-4 text-base leading-[1.65] text-muted-foreground">
+              Whether you're searching for your first job or your next leadership role, Power Consult provides the tools and opportunities to move your career forward.
+            </p>
+          </div>
+          <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((s, i) => (
+              <article
+                key={i}
+                className="group flex flex-col rounded-[16px] border border-border bg-white p-7 transition-all hover:-translate-y-0.5 hover:border-[var(--teal)]/50 hover:shadow-lg hover:shadow-[var(--navy)]/5"
+              >
+                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-[10px] bg-[var(--teal-soft)] text-[var(--navy)]">
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-lg font-bold tracking-[-0.01em] text-foreground">{s.title}</h3>
+                <p className="mt-2 flex-1 text-sm leading-[1.65] text-muted-foreground">{s.body}</p>
+                {s.tags && (
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {s.tags.map(t => (
+                      <span key={t} className="rounded-[6px] bg-secondary px-2 py-1 text-[11px] font-medium text-secondary-foreground">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <button className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--navy)] transition-colors hover:text-[var(--teal)]">
+                  Read more <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="grid grid-cols-1 gap-12 sm:grid-cols-3 sm:gap-10">
-              {steps.map((step, i) => {
-                const iconColors = [
-                  'bg-lavender text-foreground',
-                  'bg-[oklch(0.85_0.12_155)] text-foreground',
-                  'bg-[oklch(0.85_0.10_55)] text-foreground',
-                ];
-                return (
-                  <div key={i} className="relative">
-                    
-                    <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-[10px] ${iconColors[i]}`}>
-                      <step.icon className="h-5 w-5" />
+      {/* ━━━ ABOUT ━━━ */}
+      <section id="about" className="relative py-20 sm:py-28">
+        <div className="mx-auto max-w-6xl px-6 sm:px-8">
+          <div className="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
+            <div className="relative">
+              <div className="absolute -left-3 top-6 hidden h-full w-1 rounded-full bg-[var(--teal)] lg:block" />
+              <div className="rounded-[24px] bg-gradient-to-br from-[var(--navy)] to-[var(--navy-deep)] p-10 text-white shadow-xl shadow-[var(--navy)]/20">
+                <div className="grid grid-cols-2 gap-6">
+                  {[
+                    { k: '10,000+', v: 'Professionals onboarded' },
+                    { k: '500+', v: 'Verified employers' },
+                    { k: '40+', v: 'Industries served' },
+                    { k: '24h', v: 'Average response time' },
+                  ].map((stat, i) => (
+                    <div key={i} className="rounded-[12px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
+                      <p className="text-3xl font-bold tracking-[-0.02em] text-white">{stat.k}</p>
+                      <p className="mt-1 text-xs text-white/70">{stat.v}</p>
                     </div>
-                    <h3 className="text-lg font-semibold tracking-[-0.02em] text-white">{step.title}</h3>
-                    <p className="mt-2 text-sm leading-[1.6] text-white/70">{step.description}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          </div>
-        </section>
-
-        {/* ━━━ FEATURES — light with left header ━━━ */}
-        <section className="py-20 sm:py-28">
-          <div className="mx-auto max-w-6xl px-6 sm:px-10">
-            <div className="flex flex-col gap-12 lg:flex-row lg:gap-20">
-              {/* Sticky header on left */}
-              <div className="lg:w-80 lg:flex-shrink-0">
-                <div className="lg:sticky lg:top-8">
-                  <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-lavender">Features</p>
-                  <h2 className="text-3xl font-bold leading-[1.08] tracking-[-0.01em] text-foreground sm:text-4xl">Everything you need to prioritize well</h2>
-                  <p className="mt-4 text-base leading-[1.6] text-muted-foreground">
-                    Simple tools that give your product decisions a foundation of real team input.
-                  </p>
+                  ))}
                 </div>
               </div>
+            </div>
+            <div>
+              <SectionLabel>About Power Consult</SectionLabel>
+              <h2 className="text-3xl font-bold tracking-[-0.02em] text-foreground sm:text-4xl">
+                Connecting Great Talent with Great Companies
+              </h2>
+              <div className="mt-6 space-y-4 text-base leading-[1.65] text-muted-foreground">
+                <p>At Power Consult, we believe every talented professional deserves the right opportunity.</p>
+                <p>Our recruitment platform helps candidates showcase their experience while enabling employers to discover skilled professionals quickly and efficiently.</p>
+                <p>Whether you're a fresh graduate, an experienced professional, or an executive, we're committed to helping you find opportunities where you can thrive.</p>
+              </div>
+              <ul className="mt-7 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                {aboutBullets.map(b => (
+                  <li key={b} className="flex items-center gap-2.5 text-sm font-medium text-foreground">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--teal)] text-white">
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                    </span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => scrollTo('process')}
+                className="mt-8 inline-flex items-center gap-2 rounded-[8px] border border-border bg-white px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-[var(--teal)] hover:text-[var(--navy)]"
+              >
+                Learn More <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              {/* Feature cards on right */}
-              <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {features.map((feature, i) => (
-                  <div key={i} className="group rounded-[16px] border border-border p-7 transition-all hover:border-lavender/30 hover:shadow-lg hover:shadow-lavender/5 sm:p-8">
-                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-[10px] bg-lavender/10 transition-colors group-hover:bg-lavender/15">
-                      <feature.icon className="h-5 w-5 text-lavender" />
-                    </div>
-                    <h3 className="text-base font-semibold tracking-[-0.02em] text-foreground">{feature.title}</h3>
-                    <p className="mt-2 text-sm leading-[1.6] text-muted-foreground">{feature.description}</p>
+      {/* ━━━ PROCESS ━━━ */}
+      <section id="process" className="relative bg-[var(--navy)] py-20 text-white sm:py-28">
+        <div className="mx-auto max-w-6xl px-6 sm:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--teal)]">The process</p>
+            <h2 className="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">Your Journey to Your Next Role</h2>
+            <p className="mt-4 text-base leading-[1.65] text-white/70">
+              A simple process designed to help you connect with the right opportunities.
+            </p>
+          </div>
+          <ol className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((step, i) => (
+              <li
+                key={i}
+                className="relative rounded-[16px] border border-white/10 bg-white/[0.04] p-7 backdrop-blur transition-colors hover:border-[var(--teal)]/40"
+              >
+                <span className="text-xs font-bold tracking-[0.2em] text-[var(--teal)]">STEP {step.num}</span>
+                <h3 className="mt-3 text-lg font-bold tracking-[-0.01em] text-white">{step.title}</h3>
+                <p className="mt-2 text-sm leading-[1.65] text-white/70">{step.body}</p>
+                {i < steps.length - 1 && (
+                  <ArrowRight className="absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-[var(--teal)]/60 lg:block" />
+                )}
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-20 rounded-[24px] border border-white/10 bg-white/[0.03] p-8 sm:p-12 backdrop-blur">
+            <div className="mx-auto max-w-2xl text-center">
+              <h3 className="text-2xl font-bold tracking-[-0.01em] sm:text-3xl">Why Choose Power Consult?</h3>
+              <p className="mt-3 text-sm text-white/70">Built to give candidates real visibility and employers high-signal matches.</p>
+            </div>
+            <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {whyItems.map(w => (
+                <div key={w.title} className="flex items-start gap-3 rounded-[12px] border border-white/10 bg-white/[0.04] p-4">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[8px] bg-[var(--teal)] text-[var(--navy)]">
+                    <w.icon className="h-4 w-4" />
                   </div>
+                  <p className="text-sm font-semibold leading-tight text-white">{w.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━ REGISTRATION FORM ━━━ */}
+      <section id="register" className="relative bg-secondary/40 py-20 sm:py-28">
+        <div className="mx-auto max-w-4xl px-6 sm:px-8">
+          <div className="text-center">
+            <SectionLabel>Get started</SectionLabel>
+            <h2 className="text-3xl font-bold tracking-[-0.02em] text-foreground sm:text-4xl">Create Your Talent Profile</h2>
+            <p className="mt-4 text-base leading-[1.65] text-muted-foreground">
+              Tell us about yourself. We'll match your profile with employers actively hiring for roles that fit.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="mt-12 space-y-10 rounded-[20px] border border-border bg-white p-6 shadow-xl shadow-[var(--navy)]/5 sm:p-10">
+            {/* Personal */}
+            <fieldset>
+              <legend className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.15em] text-[var(--navy)]">
+                <span className="h-px w-8 bg-[var(--teal)]" /> Personal Information
+              </legend>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Full Name"><input required className={inputClass} placeholder="Jane Doe" /></Field>
+                <Field label="Email Address"><input required type="email" className={inputClass} placeholder="jane@example.com" /></Field>
+                <Field label="Phone Number"><input required className={inputClass} placeholder="+234 800 000 0000" /></Field>
+                <Field label="Date of Birth"><input type="date" className={inputClass} /></Field>
+                <Field label="Gender">
+                  <select className={inputClass} defaultValue="">
+                    <option value="" disabled>Select…</option>
+                    <option>Female</option><option>Male</option><option>Non-binary</option><option>Prefer not to say</option>
+                  </select>
+                </Field>
+                <Field label="State"><input className={inputClass} placeholder="Lagos" /></Field>
+                <Field label="City"><input className={inputClass} placeholder="Ikeja" /></Field>
+                <Field label="LinkedIn Profile (Optional)"><input className={inputClass} placeholder="linkedin.com/in/…" /></Field>
+              </div>
+            </fieldset>
+
+            {/* Professional */}
+            <fieldset>
+              <legend className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.15em] text-[var(--navy)]">
+                <span className="h-px w-8 bg-[var(--teal)]" /> Professional Information
+              </legend>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Current Employment Status">
+                  <select className={inputClass} defaultValue="">
+                    <option value="" disabled>Select…</option>
+                    <option>Employed</option><option>Unemployed</option><option>Freelance</option><option>Student</option>
+                  </select>
+                </Field>
+                <Field label="Current Job Title"><input className={inputClass} placeholder="Product Manager" /></Field>
+                <Field label="Years of Experience">
+                  <select className={inputClass} defaultValue="">
+                    <option value="" disabled>Select…</option>
+                    <option>0–1 years</option><option>2–4 years</option><option>5–7 years</option><option>8–10 years</option><option>10+ years</option>
+                  </select>
+                </Field>
+                <Field label="Highest Qualification">
+                  <select className={inputClass} defaultValue="">
+                    <option value="" disabled>Select…</option>
+                    <option>Secondary School</option><option>Diploma</option><option>Bachelor's</option><option>Master's</option><option>PhD</option>
+                  </select>
+                </Field>
+                <Field label="Industry"><input className={inputClass} placeholder="Technology" /></Field>
+                <Field label="Expected Salary"><input className={inputClass} placeholder="e.g. ₦500,000 / month" /></Field>
+                <div className="sm:col-span-2">
+                  <Field label="Skills"><input className={inputClass} placeholder="React, Python, Stakeholder management…" /></Field>
+                </div>
+                <div className="sm:col-span-2">
+                  <Field label="Certifications"><input className={inputClass} placeholder="PMP, AWS Solutions Architect…" /></Field>
+                </div>
+              </div>
+              <div className="mt-5">
+                <span className="mb-2 block text-xs font-semibold text-foreground">Preferred Work Type</span>
+                <div className="flex flex-wrap gap-2">
+                  {['Remote', 'Hybrid', 'On-site'].map(w => (
+                    <label key={w} className="flex cursor-pointer items-center gap-2 rounded-[8px] border border-border bg-white px-4 py-2 text-sm font-medium text-foreground transition-colors has-[:checked]:border-[var(--teal)] has-[:checked]:bg-[var(--teal-soft)]">
+                      <input type="checkbox" className="accent-[var(--teal)]" />
+                      {w}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </fieldset>
+
+            {/* Career Interests */}
+            <fieldset>
+              <legend className="mb-1 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.15em] text-[var(--navy)]">
+                <span className="h-px w-8 bg-[var(--teal)]" /> Career Interests
+              </legend>
+              <p className="mb-4 text-xs text-muted-foreground">Select all that apply — multiple selections boost your visibility.</p>
+              <div className="flex flex-wrap gap-2">
+                {careerInterests.map(i => {
+                  const active = interests.has(i);
+                  return (
+                    <button
+                      type="button"
+                      key={i}
+                      onClick={() => toggleInterest(i)}
+                      className={`rounded-[8px] border px-3.5 py-2 text-xs font-semibold transition-all ${
+                        active
+                          ? 'border-[var(--teal)] bg-[var(--teal-soft)] text-[var(--navy)]'
+                          : 'border-border bg-white text-muted-foreground hover:border-[var(--teal)]/60 hover:text-foreground'
+                      }`}
+                    >
+                      {active && <Check className="mr-1 inline h-3 w-3" strokeWidth={3} />}
+                      {i}
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+
+            {/* Uploads */}
+            <fieldset>
+              <legend className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.15em] text-[var(--navy)]">
+                <span className="h-px w-8 bg-[var(--teal)]" /> Upload Documents
+              </legend>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {[
+                  { label: 'Upload CV', required: true },
+                  { label: 'Cover Letter (Optional)' },
+                  { label: 'Portfolio (Optional)' },
+                  { label: 'Certificates (Optional)' },
+                ].map(({ label, required }) => (
+                  <label key={label} className="flex cursor-pointer items-center gap-3 rounded-[12px] border border-dashed border-border bg-secondary/40 px-4 py-4 text-sm text-foreground transition-colors hover:border-[var(--teal)] hover:bg-[var(--teal-soft)]/40">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-white text-[var(--navy)] shadow-sm">
+                      <FileUp className="h-4 w-4" />
+                    </span>
+                    <span className="flex-1">
+                      <span className="block font-semibold">{label}{required && <span className="text-[var(--teal)]"> *</span>}</span>
+                      <span className="block text-xs text-muted-foreground">PDF, DOC, DOCX up to 10MB</span>
+                    </span>
+                    <input type="file" className="sr-only" />
+                  </label>
                 ))}
               </div>
+            </fieldset>
+
+            <div className="flex flex-col items-center gap-3 border-t border-border pt-8 sm:flex-row sm:justify-between">
+              <p className="text-xs text-muted-foreground">By submitting, you agree to our terms of service and privacy policy.</p>
+              <button
+                type="submit"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-[var(--navy)] px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-[var(--navy-deep)] hover:shadow-lg hover:shadow-[var(--navy)]/25 sm:w-auto"
+              >
+                Join the Talent Pool <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      {/* ━━━ FOOTER CTA ━━━ */}
+      <section className="relative py-20 sm:py-24">
+        <div className="mx-auto max-w-5xl px-6 sm:px-8">
+          <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[var(--navy)] to-[var(--navy-deep)] p-10 text-center text-white sm:p-16">
+            <div className="pointer-events-none absolute -top-20 right-0 h-80 w-80 rounded-full bg-[var(--teal)]/20 blur-3xl" />
+            <div className="relative">
+              <h2 className="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">Ready to Take the Next Step?</h2>
+              <p className="mx-auto mt-4 max-w-xl text-base leading-[1.65] text-white/75">
+                Create your profile today and let Power Consult connect you with employers looking for talent like yours.
+              </p>
+              <button
+                onClick={() => scrollTo('register')}
+                className="group mt-9 inline-flex items-center gap-2 rounded-[8px] bg-[var(--teal)] px-8 py-3.5 text-base font-bold text-[var(--navy-deep)] transition-all hover:bg-white"
+              >
+                Get Started Today <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </button>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ━━━ CTA — gradient bg ━━━ */}
-        <section id="auth-section" className="relative">
-          <div className="mx-6 mb-4 rounded-[24px] bg-foreground px-6 py-16 sm:mx-10 sm:px-12 sm:py-24 md:py-28">
-
-            <div className="relative mx-auto max-w-2xl">
-              {!showAuth ? (
-                <div className="text-center">
-                  <h2 className="text-3xl font-bold leading-[1.08] tracking-[-0.01em] text-white sm:text-4xl">Ready to shape what's next?</h2>
-                  <p className="mx-auto mt-4 max-w-lg text-base leading-[1.6] text-white/60">
-                    Sign in to start submitting ideas, voting on features, and helping your team prioritize what matters.
-                  </p>
-                  <button
-                    onClick={scrollToAuth}
-                    className="group mt-10 inline-flex items-center justify-center gap-2 rounded-[10px] bg-lavender px-8 py-3 text-base font-semibold text-foreground transition-all hover:shadow-lg hover:shadow-lavender/25"
-                  >
-                    Get started free <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  </button>
-                </div>
-              ) : (
-                <div className="rounded-[16px] bg-background p-6 sm:p-8 shadow-2xl">
-                  <AuthPage />
-                </div>
-              )}
+      {/* Footer */}
+      <footer className="border-t border-border bg-background">
+        <div className="mx-auto max-w-6xl px-6 py-12 sm:px-8">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <PowerConsultLogo size="md" />
+              <p className="mt-4 max-w-xs text-sm leading-[1.65] text-muted-foreground">
+                Connecting exceptional talent with innovative organizations.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-[0.15em] text-foreground">Platform</h4>
+              <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                <li><button onClick={() => scrollTo('services')} className="hover:text-foreground">Services</button></li>
+                <li><button onClick={() => scrollTo('process')} className="hover:text-foreground">How it works</button></li>
+                <li><button onClick={() => scrollTo('register')} className="hover:text-foreground">Join</button></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-[0.15em] text-foreground">Company</h4>
+              <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                <li><button onClick={() => scrollTo('about')} className="hover:text-foreground">About</button></li>
+                <li><a href="#" className="hover:text-foreground">Careers</a></li>
+                <li><a href="#" className="hover:text-foreground">Privacy</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-[0.15em] text-foreground">Contact</h4>
+              <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2"><Mail className="h-3.5 w-3.5" /> hello@powerconsult.com</li>
+                <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5" /> +234 800 000 0000</li>
+                <li className="flex items-center gap-2"><Linkedin className="h-3.5 w-3.5" /> /powerconsult</li>
+              </ul>
             </div>
           </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="px-6 py-4 sm:px-10">
-          <div className="mx-auto flex max-w-6xl items-center justify-between">
-            <UpvoteLogo size="sm" variant="light" />
-            <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Upvote. All rights reserved.</p>
+          <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 sm:flex-row">
+            <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Power Consult. All rights reserved.</p>
+            <p className="text-xs text-muted-foreground">Built for talented professionals everywhere.</p>
           </div>
-        </footer>
-      </div>
+        </div>
+      </footer>
+
+      <Toaster />
     </div>
   );
 }
