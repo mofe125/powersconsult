@@ -6,7 +6,6 @@ import {
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import { PowerConsultLogo } from '@/components/brand/PowerConsultLogo';
-import heroImage from '@/assets/hero-professionals.jpg';
 
 const services = [
   { icon: UserPlus, title: 'Create Your Profile', body: 'Build your professional profile by adding your education, experience, skills, certifications, and career interests.' },
