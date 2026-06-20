@@ -178,13 +178,13 @@ export function LandingPage() {
               <h1 className="text-4xl font-bold leading-[1.05] tracking-[-0.02em] text-foreground sm:text-5xl lg:text-[56px]">
                 Your Next Career <span className="text-[var(--navy)]">Opportunity</span> Starts Here
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-[1.65] text-muted-foreground sm:text-lg">
+              <p className="mx-auto mt-6 max-w-xl text-base leading-[1.65] text-muted-foreground sm:text-lg">
                 Power Consult connects exceptional talent with innovative startups, technology companies, SMEs, and leading organizations.
               </p>
-              <p className="mt-4 max-w-xl text-base leading-[1.65] text-muted-foreground">
+              <p className="mx-auto mt-4 max-w-xl text-base leading-[1.65] text-muted-foreground">
                 Create your profile, upload your CV, select multiple career interests, and get matched with opportunities that fit your skills and ambitions.
               </p>
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <div className="mx-auto mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <button
                   onClick={() => scrollTo('register')}
                   className="group inline-flex items-center justify-center gap-2 rounded-[8px] bg-[var(--navy)] px-7 py-3.5 text-base font-semibold text-white transition-all hover:bg-[var(--navy-deep)] hover:shadow-lg hover:shadow-[var(--navy)]/20"
@@ -199,7 +199,7 @@ export function LandingPage() {
                   Explore Opportunities
                 </button>
               </div>
-              <div className="mt-10 flex items-center gap-6 text-xs font-semibold text-muted-foreground">
+              <div className="mx-auto mt-10 flex items-center justify-center gap-6 text-xs font-semibold text-muted-foreground">
                 <div><span className="block text-2xl font-bold text-foreground">10k+</span>Candidates</div>
                 <div className="h-8 w-px bg-border" />
                 <div><span className="block text-2xl font-bold text-foreground">500+</span>Employers</div>
