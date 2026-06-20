@@ -169,7 +169,7 @@ export function LandingPage() {
           <div className="absolute -bottom-40 -left-40 h-[420px] w-[420px] rounded-full bg-[var(--navy)]/[0.08] blur-3xl" />
         </div>
         <div className="relative mx-auto max-w-6xl px-6 py-16 sm:px-8 sm:py-24">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="mx-auto max-w-3xl text-center">
             <div>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-white px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--teal)]" />
