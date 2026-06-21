@@ -14,7 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          career_interests: string[] | null
+          certificates_path: string | null
+          certifications: string | null
+          city: string | null
+          cover_letter_path: string | null
+          created_at: string
+          current_job_title: string | null
+          cv_path: string | null
+          date_of_birth: string | null
+          email: string
+          employment_status: string | null
+          expected_salary: string | null
+          full_name: string
+          gender: string | null
+          highest_qualification: string | null
+          id: string
+          industry: string | null
+          linkedin_url: string | null
+          phone: string | null
+          portfolio_path: string | null
+          preferred_work_types: string[] | null
+          skills: string | null
+          state: string | null
+          years_of_experience: string | null
+        }
+        Insert: {
+          career_interests?: string[] | null
+          certificates_path?: string | null
+          certifications?: string | null
+          city?: string | null
+          cover_letter_path?: string | null
+          created_at?: string
+          current_job_title?: string | null
+          cv_path?: string | null
+          date_of_birth?: string | null
+          email: string
+          employment_status?: string | null
+          expected_salary?: string | null
+          full_name: string
+          gender?: string | null
+          highest_qualification?: string | null
+          id?: string
+          industry?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          portfolio_path?: string | null
+          preferred_work_types?: string[] | null
+          skills?: string | null
+          state?: string | null
+          years_of_experience?: string | null
+        }
+        Update: {
+          career_interests?: string[] | null
+          certificates_path?: string | null
+          certifications?: string | null
+          city?: string | null
+          cover_letter_path?: string | null
+          created_at?: string
+          current_job_title?: string | null
+          cv_path?: string | null
+          date_of_birth?: string | null
+          email?: string
+          employment_status?: string | null
+          expected_salary?: string | null
+          full_name?: string
+          gender?: string | null
+          highest_qualification?: string | null
+          id?: string
+          industry?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          portfolio_path?: string | null
+          preferred_work_types?: string[] | null
+          skills?: string | null
+          state?: string | null
+          years_of_experience?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

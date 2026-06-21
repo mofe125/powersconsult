@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight, Menu, X, UserPlus, FileUp, Sparkles, Layers, Briefcase, GraduationCap,
-  ShieldCheck, BadgeCheck, Search, Bell, Check, Star, Linkedin, Mail, Phone,
+  ShieldCheck, BadgeCheck, Search, Bell, Check, Star, Linkedin, Mail, Phone, Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import { PowerConsultLogo } from '@/components/brand/PowerConsultLogo';
+import { supabase } from '@/integrations/supabase/client';
 
 const services = [
   { icon: UserPlus, title: 'Create Your Profile', body: 'Build your professional profile by adding your education, experience, skills, certifications, and career interests.' },
@@ -72,6 +73,11 @@ export function LandingPage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [interests, setInterests] = useState<Set<string>>(new Set());
+  const [submitting, setSubmitting] = useState(false);
+  const [files, setFiles] = useState<Record<string, File | null>>({
+    cv: null, cover_letter: null, portfolio: null, certificates: null,
+  });
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -92,9 +98,85 @@ export function LandingPage() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const onFileChange = (key: string, file: File | null) => {
+    if (file && file.size > 10 * 1024 * 1024) {
+      toast.error(`${file.name} exceeds the 10MB limit.`);
+      return;
+    }
+    setFiles(prev => ({ ...prev, [key]: file }));
+  };
+
+  const uploadDoc = async (applicationId: string, key: string, file: File | null) => {
+    if (!file) return null;
+    const ext = file.name.split('.').pop() ?? 'bin';
+    const path = `${applicationId}/${key}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage
+      .from('applications')
+      .upload(path, file, { contentType: file.type, upsert: false });
+    if (error) throw error;
+    return path;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast.success("Welcome to Power Consult — we'll be in touch shortly.");
+    if (submitting) return;
+    if (!files.cv) {
+      toast.error('Please upload your CV to continue.');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const fd = new FormData(e.currentTarget);
+      const workTypes = fd.getAll('preferred_work_types').map(String);
+
+      const applicationId = crypto.randomUUID();
+
+      const [cv_path, cover_letter_path, portfolio_path, certificates_path] = await Promise.all([
+        uploadDoc(applicationId, 'cv', files.cv),
+        uploadDoc(applicationId, 'cover-letter', files.cover_letter),
+        uploadDoc(applicationId, 'portfolio', files.portfolio),
+        uploadDoc(applicationId, 'certificates', files.certificates),
+      ]);
+
+      const payload = {
+        id: applicationId,
+        full_name: String(fd.get('full_name') ?? '').trim(),
+        email: String(fd.get('email') ?? '').trim(),
+        phone: String(fd.get('phone') ?? '').trim() || null,
+        date_of_birth: (fd.get('date_of_birth') as string) || null,
+        gender: (fd.get('gender') as string) || null,
+        state: (fd.get('state') as string) || null,
+        city: (fd.get('city') as string) || null,
+        linkedin_url: (fd.get('linkedin_url') as string) || null,
+        employment_status: (fd.get('employment_status') as string) || null,
+        current_job_title: (fd.get('current_job_title') as string) || null,
+        years_of_experience: (fd.get('years_of_experience') as string) || null,
+        highest_qualification: (fd.get('highest_qualification') as string) || null,
+        industry: (fd.get('industry') as string) || null,
+        expected_salary: (fd.get('expected_salary') as string) || null,
+        skills: (fd.get('skills') as string) || null,
+        certifications: (fd.get('certifications') as string) || null,
+        preferred_work_types: workTypes,
+        career_interests: Array.from(interests),
+        cv_path,
+        cover_letter_path,
+        portfolio_path,
+        certificates_path,
+      };
+
+      const { error } = await supabase.from('applications').insert(payload);
+      if (error) throw error;
+
+      toast.success("Application received — we'll be in touch shortly.");
+      formRef.current?.reset();
+      setFiles({ cv: null, cover_letter: null, portfolio: null, certificates: null });
+      setInterests(new Set());
+    } catch (err) {
+      console.error('Application submission failed', err);
+      toast.error(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const navLinks: [string, string][] = [
@@ -320,26 +402,26 @@ export function LandingPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-12 space-y-10 rounded-[20px] border border-border bg-white p-6 shadow-xl shadow-[var(--navy)]/5 sm:p-10">
+          <form ref={formRef} onSubmit={handleSubmit} className="mt-12 space-y-10 rounded-[20px] border border-border bg-white p-6 shadow-xl shadow-[var(--navy)]/5 sm:p-10">
             {/* Personal */}
             <fieldset>
               <legend className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.15em] text-[var(--navy)]">
                 <span className="h-px w-8 bg-[var(--teal)]" /> Personal Information
               </legend>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field label="Full Name"><input required className={inputClass} placeholder="Jane Doe" /></Field>
-                <Field label="Email Address"><input required type="email" className={inputClass} placeholder="jane@example.com" /></Field>
-                <Field label="Phone Number"><input required className={inputClass} placeholder="+234 800 000 0000" /></Field>
-                <Field label="Date of Birth"><input type="date" className={inputClass} /></Field>
+                <Field label="Full Name"><input name="full_name" required className={inputClass} placeholder="Jane Doe" /></Field>
+                <Field label="Email Address"><input name="email" required type="email" className={inputClass} placeholder="jane@example.com" /></Field>
+                <Field label="Phone Number"><input name="phone" required className={inputClass} placeholder="+234 800 000 0000" /></Field>
+                <Field label="Date of Birth"><input name="date_of_birth" type="date" className={inputClass} /></Field>
                 <Field label="Gender">
-                  <select className={inputClass} defaultValue="">
+                  <select name="gender" className={inputClass} defaultValue="">
                     <option value="" disabled>Select…</option>
                     <option>Female</option><option>Male</option><option>Non-binary</option><option>Prefer not to say</option>
                   </select>
                 </Field>
-                <Field label="State"><input className={inputClass} placeholder="Lagos" /></Field>
-                <Field label="City"><input className={inputClass} placeholder="Ikeja" /></Field>
-                <Field label="LinkedIn Profile (Optional)"><input className={inputClass} placeholder="linkedin.com/in/…" /></Field>
+                <Field label="State"><input name="state" className={inputClass} placeholder="Lagos" /></Field>
+                <Field label="City"><input name="city" className={inputClass} placeholder="Ikeja" /></Field>
+                <Field label="LinkedIn Profile (Optional)"><input name="linkedin_url" className={inputClass} placeholder="linkedin.com/in/…" /></Field>
               </div>
             </fieldset>
 
@@ -350,31 +432,31 @@ export function LandingPage() {
               </legend>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field label="Current Employment Status">
-                  <select className={inputClass} defaultValue="">
+                  <select name="employment_status" className={inputClass} defaultValue="">
                     <option value="" disabled>Select…</option>
                     <option>Employed</option><option>Unemployed</option><option>Freelance</option><option>Student</option>
                   </select>
                 </Field>
-                <Field label="Current Job Title"><input className={inputClass} placeholder="Product Manager" /></Field>
+                <Field label="Current Job Title"><input name="current_job_title" className={inputClass} placeholder="Product Manager" /></Field>
                 <Field label="Years of Experience">
-                  <select className={inputClass} defaultValue="">
+                  <select name="years_of_experience" className={inputClass} defaultValue="">
                     <option value="" disabled>Select…</option>
                     <option>0–1 years</option><option>2–4 years</option><option>5–7 years</option><option>8–10 years</option><option>10+ years</option>
                   </select>
                 </Field>
                 <Field label="Highest Qualification">
-                  <select className={inputClass} defaultValue="">
+                  <select name="highest_qualification" className={inputClass} defaultValue="">
                     <option value="" disabled>Select…</option>
                     <option>Secondary School</option><option>Diploma</option><option>Bachelor's</option><option>Master's</option><option>PhD</option>
                   </select>
                 </Field>
-                <Field label="Industry"><input className={inputClass} placeholder="Technology" /></Field>
-                <Field label="Expected Salary"><input className={inputClass} placeholder="e.g. ₦500,000 / month" /></Field>
+                <Field label="Industry"><input name="industry" className={inputClass} placeholder="Technology" /></Field>
+                <Field label="Expected Salary"><input name="expected_salary" className={inputClass} placeholder="e.g. ₦500,000 / month" /></Field>
                 <div className="sm:col-span-2">
-                  <Field label="Skills"><input className={inputClass} placeholder="React, Python, Stakeholder management…" /></Field>
+                  <Field label="Skills"><input name="skills" className={inputClass} placeholder="React, Python, Stakeholder management…" /></Field>
                 </div>
                 <div className="sm:col-span-2">
-                  <Field label="Certifications"><input className={inputClass} placeholder="PMP, AWS Solutions Architect…" /></Field>
+                  <Field label="Certifications"><input name="certifications" className={inputClass} placeholder="PMP, AWS Solutions Architect…" /></Field>
                 </div>
               </div>
               <div className="mt-5">
@@ -382,7 +464,7 @@ export function LandingPage() {
                 <div className="flex flex-wrap gap-2">
                   {['Remote', 'Hybrid', 'On-site'].map(w => (
                     <label key={w} className="flex cursor-pointer items-center gap-2 rounded-[8px] border border-border bg-white px-4 py-2 text-sm font-medium text-foreground transition-colors has-[:checked]:border-[var(--teal)] has-[:checked]:bg-[var(--teal-soft)]">
-                      <input type="checkbox" className="accent-[var(--teal)]" />
+                      <input type="checkbox" name="preferred_work_types" value={w} className="accent-[var(--teal)]" />
                       {w}
                     </label>
                   ))}
@@ -425,22 +507,32 @@ export function LandingPage() {
               </legend>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {[
-                  { label: 'Upload CV', required: true },
-                  { label: 'Cover Letter (Optional)' },
-                  { label: 'Portfolio (Optional)' },
-                  { label: 'Certificates (Optional)' },
-                ].map(({ label, required }) => (
-                  <label key={label} className="flex cursor-pointer items-center gap-3 rounded-[12px] border border-dashed border-border bg-secondary/40 px-4 py-4 text-sm text-foreground transition-colors hover:border-[var(--teal)] hover:bg-[var(--teal-soft)]/40">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-white text-[var(--navy)] shadow-sm">
-                      <FileUp className="h-4 w-4" />
-                    </span>
-                    <span className="flex-1">
-                      <span className="block font-semibold">{label}{required && <span className="text-[var(--teal)]"> *</span>}</span>
-                      <span className="block text-xs text-muted-foreground">PDF, DOC, DOCX up to 10MB</span>
-                    </span>
-                    <input type="file" className="sr-only" />
-                  </label>
-                ))}
+                  { key: 'cv', label: 'Upload CV', required: true },
+                  { key: 'cover_letter', label: 'Cover Letter (Optional)' },
+                  { key: 'portfolio', label: 'Portfolio (Optional)' },
+                  { key: 'certificates', label: 'Certificates (Optional)' },
+                ].map(({ key, label, required }) => {
+                  const selected = files[key];
+                  return (
+                    <label key={key} className="flex cursor-pointer items-center gap-3 rounded-[12px] border border-dashed border-border bg-secondary/40 px-4 py-4 text-sm text-foreground transition-colors hover:border-[var(--teal)] hover:bg-[var(--teal-soft)]/40">
+                      <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[8px] bg-white text-[var(--navy)] shadow-sm">
+                        <FileUp className="h-4 w-4" />
+                      </span>
+                      <span className="flex-1 min-w-0">
+                        <span className="block font-semibold">{label}{required && <span className="text-[var(--teal)]"> *</span>}</span>
+                        <span className="block truncate text-xs text-muted-foreground">
+                          {selected ? selected.name : 'PDF, DOC, DOCX up to 10MB'}
+                        </span>
+                      </span>
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        className="sr-only"
+                        onChange={(e) => onFileChange(key, e.target.files?.[0] ?? null)}
+                      />
+                    </label>
+                  );
+                })}
               </div>
             </fieldset>
 
@@ -448,9 +540,10 @@ export function LandingPage() {
               <p className="text-xs text-muted-foreground">By submitting, you agree to our terms of service and privacy policy.</p>
               <button
                 type="submit"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-[var(--navy)] px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-[var(--navy-deep)] hover:shadow-lg hover:shadow-[var(--navy)]/25 sm:w-auto"
+                disabled={submitting}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-[var(--navy)] px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-[var(--navy-deep)] hover:shadow-lg hover:shadow-[var(--navy)]/25 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
               >
-                Join the Talent Pool <ArrowRight className="h-4 w-4" />
+                {submitting ? <>Submitting… <Loader2 className="h-4 w-4 animate-spin" /></> : <>Join the Talent Pool <ArrowRight className="h-4 w-4" /></>}
               </button>
             </div>
           </form>
