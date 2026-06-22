@@ -388,7 +388,7 @@ export function LandingPage() {
 
           <div className="mt-20 rounded-[24px] border border-white/10 bg-white/[0.03] p-8 sm:p-12 backdrop-blur">
             <div className="mx-auto max-w-2xl text-center">
-              <h3 className="text-2xl font-bold tracking-[-0.01em] sm:text-3xl">Why Choose Power Consult?</h3>
+              <h3 className="text-2xl font-bold tracking-[-0.01em] sm:text-3xl">Why Choose Powers Consult?</h3>
               <p className="mt-3 text-sm text-white/70">Built to give candidates real visibility and employers high-signal matches.</p>
             </div>
             <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
