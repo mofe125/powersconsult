@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight, Menu, X, UserPlus, FileUp, Sparkles, Layers, Briefcase, GraduationCap,
