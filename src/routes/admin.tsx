@@ -54,7 +54,7 @@ function AdminPage() {
     setLoading(true);
     try {
       const res = await fetchFn({ data: { password } });
-      setApps(res.applications as Application[]);
+      setApps(res.applications as unknown as Application[]);
       toast.success(`Loaded ${res.applications.length} application(s)`);
     } catch (err: any) {
       toast.error(err?.message || "Login failed");
