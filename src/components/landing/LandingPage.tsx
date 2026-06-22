@@ -275,7 +275,7 @@ export function LandingPage() {
                 Your Next Career <span className="text-[var(--navy)]">Opportunity</span> Starts Here
               </h1>
               <p className="mx-auto mt-6 max-w-xl text-base leading-[1.65] text-muted-foreground sm:text-lg">
-                Power Consult connects exceptional talent with innovative startups, technology companies, SMEs, and leading organizations.
+                Powers Consult connects exceptional talent with innovative startups, technology companies, SMEs, and tech organizations.
               </p>
               <p className="mx-auto mt-4 max-w-xl text-base leading-[1.65] text-muted-foreground">
                 Create your profile, upload your CV, select multiple career interests, and get matched with opportunities that fit your skills and ambitions.
@@ -316,9 +316,9 @@ export function LandingPage() {
               <div className="rounded-[24px] bg-gradient-to-br from-[var(--navy)] to-[var(--navy-deep)] p-10 text-white shadow-xl shadow-[var(--navy)]/20">
                 <div className="grid grid-cols-2 gap-6">
                   {[
-                    { k: '10,000+', v: 'Professionals onboarded' },
-                    { k: '500+', v: 'Verified employers' },
-                    { k: '40+', v: 'Industries served' },
+                    { k: '10,000+', v: 'Professionals to be onboarded' },
+                    { k: '500+', v: 'Employers to be verified' },
+                    { k: '40+', v: 'Industries to be served\u00a0' },
                     { k: '24h', v: 'Average response time' },
                   ].map((stat, i) => (
                     <div key={i} className="rounded-[12px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
@@ -330,12 +330,12 @@ export function LandingPage() {
               </div>
             </div>
             <div>
-              <SectionLabel>About Power Consult</SectionLabel>
+              <SectionLabel>ABOUT POWERS CONSULT</SectionLabel>
               <h2 className="text-3xl font-bold tracking-[-0.02em] text-foreground sm:text-4xl">
                 Connecting Great Talent with Great Companies
               </h2>
               <div className="mt-6 space-y-4 text-base leading-[1.65] text-muted-foreground">
-                <p>At Power Consult, we believe every talented professional deserves the right opportunity.</p>
+                <p>At Powers Consult, we believe every talented professional deserves the right opportunity.</p>
                 <p>Our recruitment platform helps candidates showcase their experience while enabling employers to discover skilled professionals quickly and efficiently.</p>
                 <p>Whether you're a fresh graduate, an experienced professional, or an executive, we're committed to helping you find opportunities where you can thrive.</p>
               </div>
@@ -388,7 +388,7 @@ export function LandingPage() {
 
           <div className="mt-20 rounded-[24px] border border-white/10 bg-white/[0.03] p-8 sm:p-12 backdrop-blur">
             <div className="mx-auto max-w-2xl text-center">
-              <h3 className="text-2xl font-bold tracking-[-0.01em] sm:text-3xl">Why Choose Power Consult?</h3>
+              <h3 className="text-2xl font-bold tracking-[-0.01em] sm:text-3xl">Why Choose Powers Consult?</h3>
               <p className="mt-3 text-sm text-white/70">Built to give candidates real visibility and employers high-signal matches.</p>
             </div>
             <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -572,7 +572,7 @@ export function LandingPage() {
             <div className="relative">
               <h2 className="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">Ready to Take the Next Step?</h2>
               <p className="mx-auto mt-4 max-w-xl text-base leading-[1.65] text-white/75">
-                Create your profile today and let Power Consult connect you with employers looking for talent like yours.
+                Create your profile today and let Powers Consult connect you with employers looking for talent like yours.
               </p>
               <button
                 onClick={() => scrollTo('register')}
@@ -614,14 +614,14 @@ export function LandingPage() {
             <div>
               <h4 className="text-xs font-bold uppercase tracking-[0.15em] text-foreground">Contact</h4>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2"><Mail className="h-3.5 w-3.5" /> hello@powerconsult.com</li>
+                <li className="flex items-center gap-2"><Mail className="h-3.5 w-3.5" /> hello@powersconsult.com</li>
                 <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5" /> +234 800 000 0000</li>
-                <li className="flex items-center gap-2"><Linkedin className="h-3.5 w-3.5" /> /powerconsult</li>
+                <li className="flex items-center gap-2"><Linkedin className="h-3.5 w-3.5" /> /powersconsult</li>
               </ul>
             </div>
           </div>
           <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 sm:flex-row">
-            <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Power Consult. All rights reserved.</p>
+            <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Powers Consult. All rights reserved.</p>
             <p className="text-xs text-muted-foreground">Built for talented professionals everywhere.</p>
           </div>
         </div>
