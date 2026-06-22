@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight, Menu, X, UserPlus, FileUp, Sparkles, Layers, Briefcase, GraduationCap,
@@ -206,6 +207,12 @@ export function LandingPage() {
                 {label}
               </button>
             ))}
+            <Link
+              to="/admin"
+              className="text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Admin
+            </Link>
             <button
               onClick={() => scrollTo('register')}
               className="rounded-[8px] bg-[var(--navy)] px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-[var(--navy-deep)]"
@@ -233,6 +240,13 @@ export function LandingPage() {
                   {label}
                 </button>
               ))}
+              <Link
+                to="/admin"
+                className="rounded-[8px] px-3 py-2.5 text-left text-sm font-semibold text-foreground hover:bg-secondary"
+                onClick={() => setMobileNavOpen(false)}
+              >
+                Admin
+              </Link>
               <button
                 onClick={() => scrollTo('register')}
                 className="mt-2 rounded-[8px] bg-[var(--navy)] px-4 py-2.5 text-sm font-semibold text-white"
