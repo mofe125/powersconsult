@@ -291,13 +291,6 @@ export function LandingPage() {
                   Explore Opportunities
                 </button>
               </div>
-              <div className="mx-auto mt-10 flex items-center justify-center gap-6 text-xs font-semibold text-muted-foreground">
-                <div><span className="block text-2xl font-bold text-foreground">10k+</span>Candidates</div>
-                <div className="h-8 w-px bg-border" />
-                <div><span className="block text-2xl font-bold text-foreground">500+</span>Employers</div>
-                <div className="h-8 w-px bg-border" />
-                <div><span className="block text-2xl font-bold text-foreground">95%</span>Match rate</div>
-              </div>
             </div>
           </div>
         </div>
