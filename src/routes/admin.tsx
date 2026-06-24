@@ -339,20 +339,25 @@ function MatchesTab({
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardContent className="flex flex-col gap-3 py-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-3">
-            <div className="rounded-md bg-primary/10 p-2 text-primary">
-              <Sparkles className="h-5 w-5" />
+      <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-[var(--navy-deep)] via-[var(--navy)] to-[var(--navy-deep)] text-white shadow-xl shadow-[var(--navy)]/20">
+        <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_85%_50%,var(--teal),transparent_45%)]" />
+        <CardContent className="relative flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="rounded-2xl bg-[var(--teal)]/20 p-3 text-[var(--teal)] ring-1 ring-[var(--teal)]/30">
+              <Sparkles className="h-6 w-6" />
             </div>
             <div>
-              <div className="font-medium">AI matching agent</div>
-              <p className="text-sm text-muted-foreground">
-                Scores every candidate against every open role and ranks the best fits with a match percentage.
+              <div className="text-lg font-semibold tracking-[-0.01em]">AI matching agent</div>
+              <p className="mt-0.5 max-w-xl text-sm text-white/70">
+                Scores every candidate against every open role and ranks the best fits with a transparent match percentage.
               </p>
             </div>
           </div>
-          <Button onClick={onRun} disabled={running || !hasData}>
+          <Button
+            onClick={onRun}
+            disabled={running || !hasData}
+            className="bg-[var(--teal)] text-[var(--navy-deep)] hover:bg-[var(--teal)]/90 disabled:opacity-50"
+          >
             {running ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" /> Matching…
