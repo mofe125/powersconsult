@@ -307,7 +307,7 @@ export function LandingPage() {
                     { k: '24h', v: 'Average response time' },
                   ].map((stat, i) => (
                     <div key={i} className="rounded-[12px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
-                      <p className="text-3xl font-bold tracking-[-0.02em] text-white">{stat.k}</p>
+                      <p className="text-2xl font-bold tracking-[-0.02em] text-white sm:text-3xl">{stat.k}</p>
                       <p className="mt-1 text-xs text-white/70">{stat.v}</p>
                     </div>
                   ))}

@@ -183,13 +183,19 @@ function AdminPage() {
 
   if (!authed) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4">
-        <Card className="w-full max-w-sm">
-          <CardHeader>
-            <CardTitle>Admin Login</CardTitle>
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[var(--navy)] via-[var(--navy-deep)] to-black" />
+        <div className="absolute inset-0 -z-10 opacity-30 [background-image:radial-gradient(circle_at_20%_20%,var(--teal),transparent_40%),radial-gradient(circle_at_80%_80%,var(--navy),transparent_45%)]" />
+        <Card className="w-full max-w-sm border-white/10 bg-white/[0.04] text-white shadow-2xl backdrop-blur-xl">
+          <CardHeader className="space-y-1 pb-4">
+            <div className="mb-2 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--teal)]/20 text-[var(--teal)]">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <CardTitle className="text-xl text-white">Admin Console</CardTitle>
+            <p className="text-sm text-white/60">Sign in to access the talent dashboard.</p>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-3">
               <Input
                 type="password"
                 placeholder="Admin password"
@@ -197,8 +203,13 @@ function AdminPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoFocus
                 required
+                className="border-white/15 bg-white/5 text-white placeholder:text-white/40 focus-visible:ring-[var(--teal)]"
               />
-              <Button type="submit" disabled={loading} className="w-full">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[var(--teal)] text-[var(--navy-deep)] hover:bg-[var(--teal)]/90"
+              >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign in"}
               </Button>
             </form>
@@ -214,23 +225,32 @@ function AdminPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b bg-card">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
-          <div>
-            <h1 className="text-2xl font-semibold">Powers Consult · Admin</h1>
-            <p className="text-sm text-muted-foreground">
-              Talent matching dashboard
+    <div className="min-h-screen bg-gradient-to-b from-[var(--teal-soft)]/30 via-background to-background">
+      <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-r from-[var(--navy-deep)] via-[var(--navy)] to-[var(--navy-deep)] text-white">
+        <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_15%_30%,var(--teal),transparent_45%),radial-gradient(circle_at_85%_70%,#ffffff,transparent_40%)]" />
+        <div className="relative mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-7 md:px-8">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-[var(--teal)]">
+              <Sparkles className="h-3.5 w-3.5" /> Powers Consult
+            </div>
+            <h1 className="mt-1 text-3xl font-bold tracking-[-0.02em]">Admin Console</h1>
+            <p className="text-sm text-white/70">
+              AI-powered talent matching across your tech roster.
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={() => setAuthed(false)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setAuthed(false)}
+            className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+          >
             <LogOut className="h-4 w-4" /> Sign out
           </Button>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-6 md:px-8">
-        <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+        <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">
           <Stat icon={<Users className="h-4 w-4" />} label="Candidates" value={apps.length} />
           <Stat icon={<Building2 className="h-4 w-4" />} label="Companies" value={companies.length} />
           <Stat icon={<Briefcase className="h-4 w-4" />} label="Open positions" value={openPositionsCount} />
@@ -238,10 +258,16 @@ function AdminPage() {
         </div>
 
         <Tabs defaultValue="matches" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="matches">AI Matches</TabsTrigger>
-            <TabsTrigger value="candidates">Candidates</TabsTrigger>
-            <TabsTrigger value="companies">Companies & Roles</TabsTrigger>
+          <TabsList className="h-11 rounded-xl bg-card/80 p-1 shadow-sm ring-1 ring-border/60 backdrop-blur">
+            <TabsTrigger value="matches" className="rounded-lg data-[state=active]:bg-[var(--navy)] data-[state=active]:text-white">
+              <Sparkles className="mr-1.5 h-3.5 w-3.5" /> AI Matches
+            </TabsTrigger>
+            <TabsTrigger value="candidates" className="rounded-lg data-[state=active]:bg-[var(--navy)] data-[state=active]:text-white">
+              <Users className="mr-1.5 h-3.5 w-3.5" /> Candidates
+            </TabsTrigger>
+            <TabsTrigger value="companies" className="rounded-lg data-[state=active]:bg-[var(--navy)] data-[state=active]:text-white">
+              <Building2 className="mr-1.5 h-3.5 w-3.5" /> Companies & Roles
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="matches">
@@ -272,12 +298,13 @@ function AdminPage() {
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
   return (
-    <Card>
-      <CardContent className="flex items-center gap-3 py-4">
-        <div className="rounded-md bg-muted p-2 text-muted-foreground">{icon}</div>
-        <div>
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-          <div className="text-xl font-semibold">{value}</div>
+    <Card className="group relative overflow-hidden border-border/60 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[var(--navy)]/10">
+      <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-[var(--teal)] to-[var(--navy)] opacity-70" />
+      <CardContent className="flex items-center gap-3 py-5">
+        <div className="rounded-xl bg-[var(--teal-soft)] p-2.5 text-[var(--navy-deep)]">{icon}</div>
+        <div className="min-w-0">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{label}</div>
+          <div className="text-2xl font-bold tracking-[-0.02em]">{value}</div>
         </div>
       </CardContent>
     </Card>
@@ -312,20 +339,25 @@ function MatchesTab({
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardContent className="flex flex-col gap-3 py-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-3">
-            <div className="rounded-md bg-primary/10 p-2 text-primary">
-              <Sparkles className="h-5 w-5" />
+      <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-[var(--navy-deep)] via-[var(--navy)] to-[var(--navy-deep)] text-white shadow-xl shadow-[var(--navy)]/20">
+        <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_85%_50%,var(--teal),transparent_45%)]" />
+        <CardContent className="relative flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="rounded-2xl bg-[var(--teal)]/20 p-3 text-[var(--teal)] ring-1 ring-[var(--teal)]/30">
+              <Sparkles className="h-6 w-6" />
             </div>
             <div>
-              <div className="font-medium">AI matching agent</div>
-              <p className="text-sm text-muted-foreground">
-                Scores every candidate against every open role and ranks the best fits with a match percentage.
+              <div className="text-lg font-semibold tracking-[-0.01em]">AI matching agent</div>
+              <p className="mt-0.5 max-w-xl text-sm text-white/70">
+                Scores every candidate against every open role and ranks the best fits with a transparent match percentage.
               </p>
             </div>
           </div>
-          <Button onClick={onRun} disabled={running || !hasData}>
+          <Button
+            onClick={onRun}
+            disabled={running || !hasData}
+            className="bg-[var(--teal)] text-[var(--navy-deep)] hover:bg-[var(--teal)]/90 disabled:opacity-50"
+          >
             {running ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" /> Matching…
